@@ -1,4 +1,5 @@
 <ion-content *ngIf="pelicula">
+
     <app-cabecera class="titulo" [titulo]="pelicula.title"></app-cabecera>
     <img class="backdrop-img" [src]="pelicula.backdrop_path | imagen">
 
@@ -79,7 +80,7 @@
         <ion-buttons slot="end">
             <ion-button (click)="favorito()">
                 <ion-label>Favorito</ion-label>
-                <ion-icon slot="end" name="star-outline"></ion-icon>
+                <ion-icon slot="end" [name]="estrella"></ion-icon>
             </ion-button>
         </ion-buttons>
 

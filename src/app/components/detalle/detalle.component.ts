@@ -1,8 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MoviesService } from '../../services/movies.service';
 import { PeliculaDetalle } from 'src/app/interfaces/interfaces';
-import { Genre, Actor } from '../../interfaces/interfaces';
+import { Actor, Trailer } from '../../interfaces/interfaces';
 import { ModalController } from '@ionic/angular';
+import { YoutubeVideoPlayer } from '@ionic-native/youtube-video-player/ngx';
+import { DataLocalService } from '../../services/data-local.service';
 
 @Component({
   selector: 'app-detalle',
@@ -16,6 +18,7 @@ export class DetalleComponent implements OnInit {
   actores: Actor[] = [];
   limitText = 150;
   toggleButton = false;
+  estrella = 'star-outline';
 
   slidesOpts = {
     slidesPerView: 3.3,
@@ -23,12 +26,25 @@ export class DetalleComponent implements OnInit {
     spaceBetween: 0
   };
 
+  //  cuando no hay opciones
+  sliderOptsVoid = {
+    allowSlidePrev: false,
+    allowSlideNext: false
+  };
+
   constructor(
     private modalController: ModalController,
-    private movieService: MoviesService
+    private movieService: MoviesService,
+    private dataLocal: DataLocalService
   ) { }
 
   ngOnInit() {
+
+    //  verificamos si la pelicula existe o no. para trabajar con la respuesta del lado del detalle.html
+    //  es retornada una promesa.
+    this.dataLocal.existePelicula( this.id )
+        .then( existe => this.estrella = (existe) ? 'star' : 'star-outline' );
+
     this.movieService.getDetallePelicula( this.id ).subscribe( resp => {
       this.pelicula = resp;
     });
@@ -49,12 +65,13 @@ export class DetalleComponent implements OnInit {
     }
   }
 
-  regresar() {
+  async regresar() {
     this.modalController.dismiss();
   }
 
   favorito() {
-    console.log('add favoritos');
+    const existe = this.dataLocal.guardarPelicula( this.pelicula );
+    this.estrella = (existe) ? 'star' : 'star-outline';
   }
 
 

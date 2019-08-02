@@ -3,14 +3,15 @@ import { CommonModule } from '@angular/common';
 import { ImagenPipe } from './imagen.pipe';
 import { ParesPipe } from './pares.pipe';
 import { AvatarPipe } from './avatar.pipe';
-
+import { FiltroImagenPipe } from './filtro-imagen.pipe';
 
 
 @NgModule({
   declarations: [
     ImagenPipe,
     ParesPipe,
-    AvatarPipe
+    AvatarPipe,
+    FiltroImagenPipe
   ],
   imports: [
     CommonModule
@@ -18,7 +19,8 @@ import { AvatarPipe } from './avatar.pipe';
   exports: [
     ImagenPipe,
     ParesPipe,
-    AvatarPipe
+    AvatarPipe,
+    FiltroImagenPipe
   ]
 })
 export class PipesModule { }

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { ResponsePeliculasMDB, PeliculaDetalle, ResponseActores } from '../interfaces/interfaces';
+import { ResponsePeliculasMDB, PeliculaDetalle, ResponseActores, ResponseTrailer, Genre } from '../interfaces/interfaces';
+import { map } from 'rxjs/operators';
 
 const URL = environment.url;
 const apiKey = environment.apiKey;
@@ -12,6 +13,7 @@ const apiKey = environment.apiKey;
 export class MoviesService {
 
   private popularesPage = 0;
+  generos: Genre[] = [];
 
   constructor( private http: HttpClient ) { }
 
@@ -56,5 +58,31 @@ export class MoviesService {
   getActores( id: string ) {
     const query = `/movie/${ id }/credits?a=1`;
     return this.ejecutarQuery<ResponseActores>( query );
+  }
+
+  buscarPelicula( texto: string ) {
+    const query = `/search/movie?query=${ texto }`;
+    return this.ejecutarQuery<ResponsePeliculasMDB>( query );
+  }
+
+  //  declaramos el tipo de datos que retornara la funcion
+  cargarGeneros(): Promise<Genre[]> {
+    //  retornamos la promesa con la data generos
+    return new Promise( resolve => {
+
+      this.ejecutarQuery<Genre>(`/genre/movie/list?a=1`)
+      .pipe(
+        // tslint:disable-next-line: no-string-literal
+        map( resp => resp['genres'])
+      )
+      .subscribe( resp => {
+        // tslint:disable-next-line: no-string-literal
+        this.generos = resp;
+        console.log( this.generos );
+        //  resolvemos la promesa y enviamos los generos
+        resolve( this.generos );
+      });
+
+    });
   }
 }
